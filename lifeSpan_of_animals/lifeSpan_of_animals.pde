@@ -6,8 +6,6 @@ int bfNum=10;
 float bfSpan=40;
 float mdSpan=50;
 
-PImage bfimg=loadImage("butterfly.png");
-PImage mdimg=loadImage("tako.jpg");
 
 void setup() {
   fullScreen(P2D);
@@ -43,15 +41,24 @@ void draw() {
       bf.remove(i);
     }
   }
+
+  //メンダコの部分
+  for (int i=md.size()-1; i>0; i--) {
+    Mendako m=md.get(i);
+    m.run();
+    if (m.lifeSpan<0.0) {
+      md.remove(i);
+    }
+  }
 }
 
 void keyPressed() {
   PVector location=new PVector(random(width), random(height));
   wv.add(new Wave(location));
   if (key=='a'||key=='A') {
-    bf.add(new Butterfly(location, bfSpan, bfimg));
+    bf.add(new Butterfly(location, bfSpan));
   }
-  if(key=='s'||key=='S'){
-     md.add(new Mendako(location,mdSpan,mdimg)); 
+  if (key=='s'||key=='S') {
+    md.add(new Mendako(location, mdSpan));
   }
 }

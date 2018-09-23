@@ -1,4 +1,4 @@
-class Butterfly {
+class Molfo {
   PVector location;
   PVector velocity;
   PVector acceleration;
@@ -7,39 +7,43 @@ class Butterfly {
   PImage bfimg;
   PVector noise;
   float ynoise=0;
+  float widthNoise=0;
+  PVector target;
+  float theta;
 
-  Butterfly(PVector _location, float _lifeSpan) {
+  Molfo(PVector _location, float _lifeSpan, float _theta) {
+    theta=_theta;
     location=_location.get();
     lifeSpan=_lifeSpan;
     velocity=new PVector();
     acceleration=new PVector(0, 0);
-    bfimg=loadImage("butterfly.png");
+    bfimg=loadImage("molfo.png");
   }
 
-  void run() {
-    update();
-    display();
-  }
 
-  void update() {
-    velocity=new PVector(mouseX-location.x, mouseY-location.y); 
+  void update(PVector _target) {
+    target=_target;
+    velocity=new PVector(target.x-location.x, target.y-location.y); 
     velocity.normalize();
-    velocity.mult(5);
+    velocity.mult(3);
     velocity.add(acceleration);
-    noise=new PVector(0,map(noise(ynoise),0,1,-7,7));
-    velocity.add(noise);
+    noise=new PVector(0, map(noise(ynoise), 0, 1, -5, 5));
+    velocity.y+=noise.y;
     location.add(velocity);
     acceleration.mult(0);
-    lifeSpan-=0.05;
-    ynoise+=0.01;
+    lifeSpan-=0.1;
+    ynoise+=0.07;
+    widthNoise+=0.1;
   }
 
   void display() {
     imageMode(CENTER);
     pushMatrix();
     translate(location.x, location.y);
-    tint(int(lifeSpan*255/40));
-    image(bfimg, 0, 0, 60, 40);
+    rotate(theta);
+    tint(int(lifeSpan*225/30));
+    image(bfimg, 0, 0, map(noise(widthNoise), 0, 1, 0, 150), 150);
+    image(bfimg, 0, 0, map(noise(widthNoise), 0, 1, 0, 150), 150);
     popMatrix();
   }
 
@@ -49,11 +53,5 @@ class Butterfly {
     } else {
       return false;
     }
-  }
-
-  void applyForce(PVector _force) {
-    PVector force=_force.get();
-    force.div(mass);
-    acceleration.add(force);
   }
 }
